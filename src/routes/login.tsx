@@ -1,46 +1,19 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { styled } from "styled-components";
+import { Error, Input, Switcher, Title, Wrapper, Form } from "../components/auth-components";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
+import GithubButton from "../components/github-btn";
+import GoogleButton from "../components/google-btn";
 
-const Wrapper = styled.div`
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 420px;
-    padding: 50px 0px;
-`;
 
-const Title = styled.h1`
-    font-size: 42px;
-`;
-
-const Form = styled.form`
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-`;
-
-const Input = styled.input`
-    padding:  10px 20px;
-    border-radius: 50px;
-    border: none;
-    width: 100%;
-    font-size: 16px;
-    &[type="submit"] {
-        cursor: pointer;
-        &:hover {
-            opacity: 0.8;
-        }
-    }
-`;
 export default function Login() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
+ 
+
     const auth = getAuth()
     const navigate = useNavigate();
 
@@ -57,9 +30,20 @@ export default function Login() {
 
     const onSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setError("");
+        
+        try {
+            
         const response =  await signInWithEmailAndPassword(auth, email, password)
         navigate('/')
-        console.log(response)
+        } catch (error) {
+            if(error instanceof FirebaseError) {
+                setError(error.message)
+            }
+        } finally {
+
+        }
+
     }
 
     return <Wrapper>
@@ -69,5 +53,16 @@ export default function Login() {
         <Input onChange={onChange} placeholder="password" name="password" value={password} type="password"/>
         <Input type="submit" value="로그인하기"/>
     </Form>
+    {error !== "" ? <Error>{error}</Error>: null}
+    <Switcher>
+      아직 계정이 없으신가요?&nbsp;&nbsp;
+      <Link to="/create-account">계정 생성하기</Link>
+    </Switcher>
+    <Switcher>
+      비밀번호를 잊어버리셨나요?&nbsp;&nbsp;
+      <Link to="/find-password">비밀번호 찾기</Link>
+    </Switcher>
+    <GithubButton></GithubButton>
+    <GoogleButton></GoogleButton>
     </Wrapper>
 }
