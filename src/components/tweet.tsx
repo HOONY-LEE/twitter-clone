@@ -2,18 +2,24 @@ import styled from "styled-components";
 import { ITweet } from "./timeline";
 
 const Wrapper = styled.div`
+    margin-top: 10px;
     display: grid;
     grid-template-columns: 3fr 1fr;
     padding:  20px;
-    border: 20px;
+    border: 1px solid white;
     border-radius: 15px;
+    overflow: hidden;
 `;
 
 const Column = styled.div`
 
 `;
 
-const Photo = styled.img``;
+const Photo = styled.img`
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+`;
 
 const Username = styled.span`
     font-weight: 600;
@@ -36,7 +42,7 @@ export default function Tweet({username, photo, tweet}:ITweet) {
             <Payload>{tweet}</Payload>
         </Column>
         { photo ? <Column>
-            <Photo src={photo}></Photo>
+            <Photo src={photo} object-fit></Photo>
         </Column> : null}
     </Wrapper>
 }

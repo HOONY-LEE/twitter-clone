@@ -1,7 +1,8 @@
 import { useState,useEffect } from "react"
 import styled from "styled-components";
-import { collection, getDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase";
+import Tweet from "./tweet";
 
 export interface ITweet {
     id: string;
@@ -23,19 +24,33 @@ export default function Timeline() {
             collection(db, "tweets"),
             orderBy("createdAt", "desc")
         );
-        const snapshot = await getDocs(tweetsQuery);
-        const tweets = snapshot.docs.map(doc => {
-            const {tweet, photo, userId, username, createdAt} = doc.data();
-            return {
-                tweet, 
-                photo, 
-                userId, 
-                username,  
-                createdAt,
-                id: doc.id
-            }
-        });
-        setTweets(tweets)
+        // const snapshot = await getDocs(tweetsQuery);
+        // const tweets = snapshot.docs.map(doc => {
+            // const {tweet, photo, userId, username, createdAt} = doc.data();
+            // return {
+            //     tweet, 
+            //     photo, 
+            //     userId, 
+            //     username,  
+            //     createdAt,
+            //     id: doc.id,
+        //     }
+        // });
+        await onSnapshot(tweetsQuery, (snapshot) => {
+            const tweets = snapshot.docs.map(doc=> {
+                const {tweet, photo, userId, username, createdAt} = doc.data();
+                return {
+                    tweet, 
+                    photo, 
+                    userId, 
+                    username,  
+                    createdAt,
+                    id: doc.id,
+                }
+            })
+            setTweets(tweets)
+        })
+        
     }
 
     useEffect(()=>{
@@ -43,5 +58,7 @@ export default function Timeline() {
     },[])
 
 
-    return <Wrapper>{JSON.stringify(tweets)}</Wrapper>
+    return <Wrapper>
+        {tweets.map(tweet => <Tweet key={tweet.id} {...tweet}></Tweet>)}
+    </Wrapper>
 } 
