@@ -62,6 +62,7 @@ export default function PostTweetForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [tweet, setTweet] = useState("");
     const [file, setFile] = useState<File | null>(null);
+
     
     const onChange = (e:React.ChangeEvent<HTMLTextAreaElement>) => {
         setTweet(e.target.value)
@@ -96,7 +97,6 @@ export default function PostTweetForm() {
                     photo: url
                 })
             }
-            console.log('setTweet 실행')
             setTweet("")
             setFile(null);
         } catch (e) {

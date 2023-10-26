@@ -8,7 +8,6 @@ const Wrapper = styled.div`
     grid-template-columns: 1fr 4fr;
     padding: 50px 0px;
     width: 100%;
-    height: 800px;
     max-width: 860px;
 `;
 
